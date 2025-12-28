@@ -91,6 +91,13 @@ Developed @ [CVDLAB][cvdlab]
 
 Your contributions (issues and pull request) are very appreciated!
 
+## Getting Started (Contributors)
+
+- Install dependencies: `npm install`
+- Run the frontend demo: `npm start` (dev server on port 9000, served from `demo/`)
+- Run the PoC export server: `cd poc-server && npm install && npm run start` (server on port 3100)
+- Build the library: `npm run build` (outputs to `lib/`, `es/`, and `demo/dist`)
+
 ## Contributors
 
  - [JikkuJose](https://github.com/JikkuJose)
