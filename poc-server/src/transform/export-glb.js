@@ -81,7 +81,11 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
   threeScene.updateMatrixWorld(true);
 
   const document = new Document();
-  const buffer = document.createBuffer('buffer');
+  let buffer = null;
+  const getOrCreateBuffer = () => {
+    if (!buffer) buffer = document.createBuffer('buffer');
+    return buffer;
+  };
   const gltfScene = document.createScene('scene');
   document.getRoot().setDefaultScene(gltfScene);
 
@@ -166,6 +170,7 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
     if (obj && obj.isMesh && obj.geometry) meshes.push(obj);
   });
 
+  let hasNodes = false;
   for (let index = 0; index < meshes.length; index++) {
     const mesh = meshes[index];
     const geometry = mesh.geometry?.clone?.();
@@ -186,11 +191,13 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
     const uvArray = uvAttr ? getTypedArrayCopy(uvAttr.array) : null;
     const indexArray = indexAttr ? getTypedArrayCopy(indexAttr.array) : null;
 
+    if (!positionArray) continue;
+
     const positionAccessor = document
       .createAccessor()
       .setType(Accessor.Type.VEC3)
       .setArray(positionArray)
-      .setBuffer(buffer);
+      .setBuffer(getOrCreateBuffer());
 
     const primitive = document.createPrimitive().setAttribute('POSITION', positionAccessor);
 
@@ -199,7 +206,7 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
         .createAccessor()
         .setType(Accessor.Type.VEC3)
         .setArray(normalArray)
-        .setBuffer(buffer);
+        .setBuffer(getOrCreateBuffer());
       primitive.setAttribute('NORMAL', normalAccessor);
     }
 
@@ -231,7 +238,7 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
         .createAccessor()
         .setType(Accessor.Type.VEC2)
         .setArray(uvArray)
-        .setBuffer(buffer);
+        .setBuffer(getOrCreateBuffer());
       primitive.setAttribute('TEXCOORD_0', uvAccessor);
     }
 
@@ -240,7 +247,7 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
         .createAccessor()
         .setType(Accessor.Type.SCALAR)
         .setArray(indexArray)
-        .setBuffer(buffer);
+        .setBuffer(getOrCreateBuffer());
       primitive.setIndices(indexAccessor);
     }
 
@@ -250,6 +257,12 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
 
     const gltfMesh = document.createMesh(mesh.name || `mesh-${index}`).addPrimitive(primitive);
     const node = document.createNode(mesh.name || `node-${index}`).setMesh(gltfMesh);
+    gltfScene.addChild(node);
+    hasNodes = true;
+  }
+
+  if (!hasNodes) {
+    const node = document.createNode('empty-node');
     gltfScene.addChild(node);
   }
 
