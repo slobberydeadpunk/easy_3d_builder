@@ -88,6 +88,75 @@ const downloadBlob = (blob, translator) => {
   window.URL.revokeObjectURL(url);
 };
 
+const sanitizePlanForExport = (plan) => {
+  if (!plan) return;
+  plan.updateMatrixWorld(true);
+
+  plan.traverse((object) => {
+    if (!object) return;
+    object.matrixAutoUpdate = true;
+    object.updateMatrix();
+    object.updateMatrixWorld(true);
+
+    const elements = object.matrix && object.matrix.elements;
+    if (elements && elements.length === 16) {
+      let valid = true;
+      for (let i = 0; i < elements.length; i++) {
+        if (!Number.isFinite(elements[i])) {
+          valid = false;
+          break;
+        }
+      }
+      if (!valid) {
+        object.matrix.identity();
+      }
+    }
+
+    if (!object.isMesh) return;
+    const geometry = object.geometry;
+    if (!geometry || !geometry.isBufferGeometry) return;
+
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    const needsNormalMap = materials.some((mat) => mat && mat.normalMap);
+
+    if (!needsNormalMap) return;
+    if (!geometry.getAttribute('tangent')) {
+      const hasUv = Boolean(geometry.getAttribute('uv'));
+      const hasNormal = Boolean(geometry.getAttribute('normal'));
+      if (hasUv && hasNormal && geometry.index && geometry.computeTangents) {
+        geometry.computeTangents();
+      }
+    }
+
+    const tangentAttr = geometry.getAttribute('tangent');
+    let validTangents = Boolean(tangentAttr && tangentAttr.array);
+    if (validTangents) {
+      const array = tangentAttr.array;
+      for (let i = 0; i < array.length; i += 4) {
+        const x = array[i + 0];
+        const y = array[i + 1];
+        const z = array[i + 2];
+        const len = Math.hypot(x, y, z);
+        if (!Number.isFinite(len) || len <= 1e-6) {
+          validTangents = false;
+          break;
+        }
+      }
+    }
+
+    if (!validTangents) {
+      if (geometry.getAttribute('tangent')) {
+        geometry.deleteAttribute('tangent');
+      }
+      materials.forEach((mat) => {
+        if (mat && mat.normalMap) {
+          mat.normalMap = null;
+        }
+      });
+    }
+  });
+};
+
 const exportPlanToGlb = (plan) => {
   return new Promise((resolve, reject) => {
     try {
@@ -95,6 +164,7 @@ const exportPlanToGlb = (plan) => {
         reject(new Error('missing-plan'));
         return;
       }
+      sanitizePlanForExport(plan);
       const exporter = new Three.GLTFExporter();
       exporter.parse(
         plan,
