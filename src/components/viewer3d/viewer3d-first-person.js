@@ -259,6 +259,7 @@ export default class Viewer3DFirstPerson extends React.Component {
     this.camera = camera;
     this.scene3D = scene3D;
     this.sceneOnTop = sceneOnTop;
+    window.__reactPlannerPlan = this.planData.plan;
     // this.planData = planData;
   }
 
@@ -277,6 +278,9 @@ export default class Viewer3DFirstPerson extends React.Component {
 
     this.scene3D.remove(this.planData.plan);
 
+    if (window.__reactPlannerPlan === this.planData.plan) {
+      window.__reactPlannerPlan = null;
+    }
     this.scene3D = null;
     this.planData = null;
     this.renderer.renderLists.dispose();

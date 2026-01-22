@@ -142,6 +142,7 @@ export default class Scene3DViewer extends React.Component {
     this.camera = camera;
     this.scene3D = scene3D;
     this.planData = planData;
+    window.__reactPlannerPlan = planData.plan;
   }
 
   componentWillUnmount() {
@@ -156,6 +157,9 @@ export default class Scene3DViewer extends React.Component {
     this.scene3D.remove(this.planData.plan);
     this.scene3D.remove(this.planData.grid);
 
+    if (window.__reactPlannerPlan === this.planData.plan) {
+      window.__reactPlannerPlan = null;
+    }
     this.scene3D = null;
     this.planData = null;
     this.camera = null;

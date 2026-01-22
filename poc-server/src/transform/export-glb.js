@@ -107,7 +107,23 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
     return await promise;
   };
 
-  const getOrCreateMaterialForMesh = async (rp) => {
+  const normalizeTangents = (arrayLike) => {
+    if (!arrayLike) return null;
+    for (let i = 0; i < arrayLike.length; i += 4) {
+      const x = arrayLike[i + 0];
+      const y = arrayLike[i + 1];
+      const z = arrayLike[i + 2];
+      const len = Math.hypot(x, y, z);
+      if (!Number.isFinite(len) || len <= 1e-6) return null;
+      const inv = 1 / len;
+      arrayLike[i + 0] = x * inv;
+      arrayLike[i + 1] = y * inv;
+      arrayLike[i + 2] = z * inv;
+    }
+    return arrayLike;
+  };
+
+  const getOrCreateMaterialForMesh = async (rp, { allowNormalMap = true } = {}) => {
     const kind = rp?.kind || 'default';
     const elementType = rp?.elementType || '';
     const textureKey = rp?.textureKey || '';
@@ -117,9 +133,9 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
       ? [1, 1, 1, 1]
       : hexToLinearBaseColorFactor(Number.isFinite(rp?.color) ? rp.color : 0xd0d0d0);
 
-    const normalUri = textureDef?.normal?.uri || '';
-    const normalScaleX = textureDef?.normal?.normalScaleX;
-    const normalScaleY = textureDef?.normal?.normalScaleY;
+    const normalUri = allowNormalMap ? textureDef?.normal?.uri || '' : '';
+    const normalScaleX = allowNormalMap ? textureDef?.normal?.normalScaleX : undefined;
+    const normalScaleY = allowNormalMap ? textureDef?.normal?.normalScaleY : undefined;
     const normalScale =
       Number.isFinite(Number(normalScaleX)) && Number.isFinite(Number(normalScaleY))
         ? (Number(normalScaleX) + Number(normalScaleY)) / 2
@@ -152,8 +168,8 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
         material.setBaseColorTexture(baseTexture);
       }
 
-      if (textureDef?.normal?.uri) {
-        const normalTexture = await getOrCreateTexture(textureDef.normal.uri);
+      if (normalUri) {
+        const normalTexture = await getOrCreateTexture(normalUri);
         material.setNormalTexture(normalTexture);
         if (Number.isFinite(normalScale)) material.setNormalScale(normalScale);
       }
@@ -178,10 +194,19 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
 
     geometry.applyMatrix4(mesh.matrixWorld);
     if (!geometry.getAttribute('normal')) geometry.computeVertexNormals();
+    if (
+      !geometry.getAttribute('tangent') &&
+      geometry.getAttribute('uv') &&
+      geometry.getAttribute('normal') &&
+      geometry.getIndex()
+    ) {
+      geometry.computeTangents();
+    }
 
     const positionAttr = geometry.getAttribute('position');
     const normalAttr = geometry.getAttribute('normal');
     const uvAttr = geometry.getAttribute('uv');
+    const tangentAttr = geometry.getAttribute('tangent');
     const indexAttr = geometry.getIndex();
 
     if (!positionAttr) continue;
@@ -189,9 +214,20 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
     const positionArray = getTypedArrayCopy(positionAttr.array);
     const normalArray = normalAttr ? getTypedArrayCopy(normalAttr.array) : null;
     const uvArray = uvAttr ? getTypedArrayCopy(uvAttr.array) : null;
+    let tangentArray = tangentAttr ? getTypedArrayCopy(tangentAttr.array) : null;
     const indexArray = indexAttr ? getTypedArrayCopy(indexAttr.array) : null;
 
     if (!positionArray) continue;
+    let allowNormalMap = true;
+    if (tangentArray) {
+      const normalized = normalizeTangents(tangentArray);
+      if (normalized) {
+        tangentArray = normalized;
+      } else {
+        tangentArray = null;
+        allowNormalMap = false;
+      }
+    }
 
     const positionAccessor = document
       .createAccessor()
@@ -242,6 +278,15 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
       primitive.setAttribute('TEXCOORD_0', uvAccessor);
     }
 
+    if (tangentArray) {
+      const tangentAccessor = document
+        .createAccessor()
+        .setType(Accessor.Type.VEC4)
+        .setArray(tangentArray)
+        .setBuffer(getOrCreateBuffer());
+      primitive.setAttribute('TANGENT', tangentAccessor);
+    }
+
     if (indexArray) {
       const indexAccessor = document
         .createAccessor()
@@ -252,7 +297,7 @@ export async function exportThreeSceneToGlb(threeScene, { texturesByType } = {})
     }
 
     const rp = mesh.userData?.rp;
-    const material = await getOrCreateMaterialForMesh(rp);
+    const material = await getOrCreateMaterialForMesh(rp, { allowNormalMap });
     primitive.setMaterial(material);
 
     const gltfMesh = document.createMesh(mesh.name || `mesh-${index}`).addPrimitive(primitive);

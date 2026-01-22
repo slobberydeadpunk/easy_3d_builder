@@ -5,6 +5,9 @@ const DEFAULT_WALL_THICKNESS = 20;
 const DEFAULT_HOLE_WIDTH = 90;
 const DEFAULT_HOLE_HEIGHT = 210;
 const DEFAULT_HOLE_ALTITUDE = 0;
+const DEFAULT_ITEM_WIDTH = 80;
+const DEFAULT_ITEM_DEPTH = 80;
+const DEFAULT_ITEM_HEIGHT = 80;
 
 const normalizeMapOrList = (value) => {
   if (!value) return [];
@@ -12,11 +15,32 @@ const normalizeMapOrList = (value) => {
   return Object.values(value);
 };
 
+const buildIdMap = (value) => {
+  if (!value) return {};
+  if (!Array.isArray(value)) return value;
+  const map = {};
+  value.forEach((entry) => {
+    if (entry && entry.id !== undefined && entry.id !== null) {
+      map[entry.id] = entry;
+    }
+  });
+  return map;
+};
+
 const getLengthProp = (properties, propName, fallback) => {
   const raw = properties?.[propName];
   const length = raw?.length;
   const num = Number(length);
   return Number.isFinite(num) ? num : fallback;
+};
+
+const getOptionalLengthProp = (properties, propName) => {
+  const raw = properties?.[propName];
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw === 'number') return Number.isFinite(raw) ? raw : null;
+  const length = raw?.length;
+  const num = Number(length);
+  return Number.isFinite(num) ? num : null;
 };
 
 const parseHexColor = (value, fallback = 0xcfcfcf) => {
@@ -257,6 +281,80 @@ const buildWallGroup = ({ line, layer, verticesById, holesById }) => {
   return group;
 };
 
+const buildItemMesh = ({ item }) => {
+  if (!item) return null;
+  const props = item.properties || {};
+  const lengthFallback = getOptionalLengthProp(props, 'length');
+  const width = getOptionalLengthProp(props, 'width') ?? lengthFallback ?? DEFAULT_ITEM_WIDTH;
+  const depth = getOptionalLengthProp(props, 'depth') ?? width ?? DEFAULT_ITEM_DEPTH;
+  const height = getOptionalLengthProp(props, 'height') ?? DEFAULT_ITEM_HEIGHT;
+  const altitude = getOptionalLengthProp(props, 'altitude') ?? 0;
+
+  if (!Number.isFinite(width) || !Number.isFinite(depth) || !Number.isFinite(height)) return null;
+  if (width <= 1e-6 || depth <= 1e-6 || height <= 1e-6) return null;
+
+  const colorValue = parseHexColor(props.color || props.patternColor, 0xcfcfcf);
+  const material = new THREE.MeshStandardMaterial({
+    color: colorValue,
+    metalness: 0,
+    roughness: 1
+  });
+  const geometry = new THREE.BoxGeometry(width, height, depth);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.name = item?.name || item?.type || item?.id || 'item';
+  mesh.position.y = altitude + height / 2;
+  mesh.userData.rp = {
+    kind: 'item',
+    elementType: item?.type || null,
+    color: colorValue
+  };
+  return mesh;
+};
+
+const buildHoleMesh = ({ hole, line, verticesById }) => {
+  if (!hole || !line) return null;
+  const vertexIds = Array.isArray(line?.vertices) ? line.vertices : [];
+  if (vertexIds.length < 2) return null;
+  const v0 = verticesById?.[vertexIds[0]];
+  const v1 = verticesById?.[vertexIds[1]];
+  if (!v0 || !v1) return null;
+
+  const start = new THREE.Vector2(Number(v0.x), Number(v0.y));
+  const end = new THREE.Vector2(Number(v1.x), Number(v1.y));
+  const dir = new THREE.Vector2().subVectors(end, start);
+  const length = dir.length();
+  if (!Number.isFinite(length) || length <= 1e-6) return null;
+
+  const offset = Number(hole.offset);
+  const clampedOffset = Number.isFinite(offset) ? clamp(offset, 0, 1) : 0.5;
+  const center2d = new THREE.Vector2().copy(start).add(dir.multiplyScalar(clampedOffset));
+
+  const width = getLengthProp(hole?.properties, 'width', DEFAULT_HOLE_WIDTH);
+  const height = getLengthProp(hole?.properties, 'height', DEFAULT_HOLE_HEIGHT);
+  const altitude = getLengthProp(hole?.properties, 'altitude', DEFAULT_HOLE_ALTITUDE);
+  const thickness = getLengthProp(line?.properties, 'thickness', DEFAULT_WALL_THICKNESS);
+
+  if (!Number.isFinite(width) || !Number.isFinite(height) || !Number.isFinite(thickness)) return null;
+
+  const geometry = new THREE.BoxGeometry(width, height, thickness);
+  const material = new THREE.MeshStandardMaterial({ color: 0xb0b0b0, metalness: 0, roughness: 1 });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.name = hole?.name || hole?.type || hole?.id || 'hole';
+  mesh.position.y = altitude + height / 2;
+  mesh.userData.rp = {
+    kind: 'hole',
+    elementType: hole?.type || null,
+    color: 0xb0b0b0
+  };
+
+  const group = new THREE.Group();
+  group.name = `${mesh.name}-group`;
+  group.position.set(center2d.x, 0, -center2d.y);
+  group.rotation.y = Math.atan2(-dir.y, dir.x);
+  group.add(mesh);
+  return group;
+};
+
 export function buildThreeSceneFromReactPlannerScene(sceneJson) {
   const scene = new THREE.Scene();
   scene.name = 'ReactPlannerScene';
@@ -274,9 +372,10 @@ export function buildThreeSceneFromReactPlannerScene(sceneJson) {
     layerGroup.name = `layer-${layer?.id || 'unknown'}`;
     layerGroup.position.y = Number(layer?.altitude) || 0;
 
-    const verticesById = layer?.vertices || {};
-    const holesById = layer?.holes || {};
-    const areasById = layer?.areas || {};
+    const verticesById = buildIdMap(layer?.vertices);
+    const holesById = buildIdMap(layer?.holes);
+    const areasById = buildIdMap(layer?.areas);
+    const linesById = buildIdMap(layer?.lines);
 
     normalizeMapOrList(layer?.areas).forEach((area) => {
       const floor = buildFloorMesh({ area, layer, verticesById, areasById });
@@ -286,6 +385,23 @@ export function buildThreeSceneFromReactPlannerScene(sceneJson) {
     normalizeMapOrList(layer?.lines).forEach((line) => {
       const wall = buildWallGroup({ line, layer, verticesById, holesById });
       if (wall) layerGroup.add(wall);
+    });
+
+    normalizeMapOrList(layer?.holes).forEach((hole) => {
+      const line = linesById?.[hole?.line];
+      const holeMesh = buildHoleMesh({ hole, line, verticesById });
+      if (holeMesh) layerGroup.add(holeMesh);
+    });
+
+    normalizeMapOrList(layer?.items).forEach((item) => {
+      const itemMesh = buildItemMesh({ item });
+      if (!itemMesh) return;
+      const pivot = new THREE.Group();
+      pivot.name = `${itemMesh.name}-pivot`;
+      pivot.rotation.y = Number(item?.rotation) * Math.PI / 180;
+      pivot.position.set(Number(item?.x) || 0, 0, -(Number(item?.y) || 0));
+      pivot.add(itemMesh);
+      layerGroup.add(pivot);
     });
 
     root.add(layerGroup);

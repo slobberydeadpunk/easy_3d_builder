@@ -1,8 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { MdCloudDownload } from 'react-icons/md';
+import * as Three from 'three';
 import { ReactPlannerComponents, ReactPlannerClasses } from 'react-planner';
 import MyCatalog from '../catalog/mycatalog';
+
+if (typeof window !== 'undefined') {
+  window.THREE = Three;
+}
+
+require('three/examples/js/exporters/GLTFExporter');
 
 const { ToolbarButton } = ReactPlannerComponents.ToolbarComponents;
 const { Project } = ReactPlannerClasses;
@@ -66,6 +73,46 @@ const buildTexturesByTypeForScene = (sceneJson) => {
   return texturesByType;
 };
 
+const downloadBlob = (blob, translator) => {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const defaultName = `react-planner-${Date.now()}.glb`;
+  const filename = window.prompt(translator.t('Insert output filename'), defaultName);
+  if (!filename) return;
+  link.setAttribute('download', filename.endsWith('.glb') ? filename : `${filename}.glb`);
+  link.href = url;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
+const exportPlanToGlb = (plan) => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!plan || !Three.GLTFExporter) {
+        reject(new Error('missing-plan'));
+        return;
+      }
+      const exporter = new Three.GLTFExporter();
+      exporter.parse(
+        plan,
+        (result) => {
+          if (result instanceof ArrayBuffer) {
+            resolve(new Blob([result], { type: 'model/gltf-binary' }));
+          } else {
+            resolve(new Blob([JSON.stringify(result)], { type: 'application/json' }));
+          }
+        },
+        { binary: true, onlyVisible: true, embedImages: true }
+      );
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 export default function ToolbarExportGLBButton({ state }, { translator }) {
   const [exporting, setExporting] = React.useState(false);
 
@@ -78,41 +125,36 @@ export default function ToolbarExportGLBButton({ state }, { translator }) {
     const cleanState = Project.unselectAll(state).updatedState;
     const sceneJson = cleanState.get('scene').toJS();
     const texturesByType = buildTexturesByTypeForScene(sceneJson);
+    const plan = window.__reactPlannerPlan;
 
-    fetch(window.REACT_PLANNER_GLB_EXPORT_ENDPOINT || DEFAULT_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scene: sceneJson, texturesByType })
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.text().then((text) => {
-            throw new Error(text || `HTTP ${res.status}`);
-          });
-        }
-        return res.blob();
-      })
+    exportPlanToGlb(plan)
       .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        const defaultName = `react-planner-${Date.now()}.glb`;
-        const filename = window.prompt(translator.t('Insert output filename'), defaultName);
-        if (!filename) return;
-
-        link.setAttribute('download', filename.endsWith('.glb') ? filename : `${filename}.glb`);
-        link.href = url;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        window.URL.revokeObjectURL(url);
+        downloadBlob(blob, translator);
       })
-      .catch((err) => {
-        console.error(err);
-        const message = err && err.message ? err.message : String(err);
-        alert(`${translator.t('Export failed')}: ${message}`);
+      .catch(() => {
+        fetch(window.REACT_PLANNER_GLB_EXPORT_ENDPOINT || DEFAULT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scene: sceneJson, texturesByType })
+        })
+          .then((res) => {
+            if (!res.ok) {
+              return res.text().then((text) => {
+                throw new Error(text || `HTTP ${res.status}`);
+              });
+            }
+            return res.blob();
+          })
+          .then((blob) => {
+            downloadBlob(blob, translator);
+          })
+          .catch((err) => {
+            console.error(err);
+            const message = err && err.message ? err.message : String(err);
+            alert(`${translator.t('Export failed')}: ${message}`);
+          })
+          .then(() => setExporting(false));
+        return null;
       })
       .then(() => setExporting(false));
   };
