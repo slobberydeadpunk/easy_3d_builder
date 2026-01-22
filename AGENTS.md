@@ -19,6 +19,9 @@ react-planner is a React + Redux + Immutable.js component for drawing 2D floorpl
 - `src/components/` and `src/styles/` hold UI and styling; `src/shared-style.js` exports shared theme tokens.
 - `src/plugins/` provides plugin hooks; see `docs/HOW_TO_CREATE_A_PLUGIN.md`.
 - `src/translator/` holds i18n helpers.
+- `demo/src/ui/toolbar-export-glb-button.jsx` triggers browser-side GLB export via Three.js GLTFExporter and performs plan sanitization before export.
+- `src/components/viewer3d/scene-creator.js` builds the 3D plan and keeps bounding boxes updated to avoid culling issues.
+- `poc-server/src/transform/export-glb.js` handles server-side GLB export and geometry normalization when browser export is unavailable.
 
 ## Development workflow
 - Install: `npm install`
@@ -32,6 +35,12 @@ react-planner is a React + Redux + Immutable.js component for drawing 2D floorpl
 - Prefer updating source in `src/`; avoid editing generated `lib/`, `es/`, or `demo/dist` directly.
 - If you add new action types, update `src/constants.js` and ensure the relevant reducer handles them.
 - When extending state, update the Immutable Records in `src/models.js` and ensure serialization/deserialization stays consistent.
+- For GLB export changes, keep browser-side and server-side pipelines aligned to avoid divergent mesh validation behavior.
+
+## GLB export flow
+- Browser export: `demo/src/ui/toolbar-export-glb-button.jsx` uses GLTFExporter with embedded images for the preview/download action.
+- Export sanitization: `sanitizePlanForExport()` normalizes matrices, ensures matrix updates, and generates tangents for meshes that use normal maps.
+- Backend export: `poc-server/src/transform/export-glb.js` exports GLB from server-side processing and includes tangent generation and fallback handling for empty scenes.
 
 ## Reference docs
 - `docs/HOW_TO_CREATE_A_CATALOG.md`
