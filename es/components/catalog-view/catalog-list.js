@@ -20,68 +20,86 @@ import * as SharedStyle from '../../shared-style';
 
 var containerStyle = {
   position: 'fixed',
-  width: 'calc( 100% - 51px)',
-  height: 'calc( 100% - 20px)',
-  backgroundColor: '#FFF',
-  padding: '1em',
+  width: 'calc(100% - 51px)',
+  height: 'calc(100% - 20px)',
+  backgroundColor: SharedStyle.PRIMARY_COLOR.main,
+  padding: SharedStyle.SPACING.xl,
   left: 50,
   overflowY: 'auto',
   overflowX: 'hidden',
-  zIndex: 10
+  zIndex: 10,
+  scrollbarWidth: 'thin',
+  scrollbarColor: SharedStyle.PRIMARY_COLOR.hover + ' transparent'
 };
 
 var itemsStyle = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(14em, 1fr))',
-  gridGap: '10px',
-  marginTop: '1em'
+  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+  gridGap: SharedStyle.SPACING.lg,
+  marginTop: SharedStyle.SPACING.lg
 };
 
 var searchContainer = {
   width: '100%',
-  height: '3em',
-  padding: '0.625em',
-  background: '#f7f7f9',
-  border: '1px solid #e1e1e8',
-  cursor: 'pointer',
+  padding: SharedStyle.SPACING.md,
+  background: SharedStyle.PRIMARY_COLOR.surface,
+  border: '1px solid rgba(255, 255, 255, 0.06)',
+  cursor: 'default',
   position: 'relative',
-  boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.11), 0 1px 4px 0 rgba(0, 0, 0, 0.11)',
-  borderRadius: '2px',
-  transition: 'all .2s ease-in-out',
-  WebkitTransition: 'all .2s ease-in-out',
-  marginBottom: '1em'
+  boxShadow: SharedStyle.SHADOWS.sm,
+  borderRadius: SharedStyle.RADIUS.lg,
+  transition: SharedStyle.TRANSITIONS.normal,
+  marginBottom: SharedStyle.SPACING.lg,
+  display: 'flex',
+  alignItems: 'center',
+  gap: SharedStyle.SPACING.md
 };
 
 var searchText = {
-  width: '8em',
-  display: 'inline-block'
+  color: SharedStyle.PRIMARY_COLOR.text_muted,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  whiteSpace: 'nowrap'
 };
 
 var searchInput = {
-  width: 'calc( 100% - 10em )',
-  height: '2em',
+  flex: 1,
+  height: '36px',
   margin: '0',
-  padding: '0 1em',
-  border: '1px solid #EEE'
+  padding: '0 12px',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  borderRadius: SharedStyle.RADIUS.md,
+  backgroundColor: SharedStyle.PRIMARY_COLOR.input,
+  color: SharedStyle.PRIMARY_COLOR.text_main,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  outline: 'none',
+  transition: SharedStyle.TRANSITIONS.fast
 };
 
 var historyContainer = _extends({}, searchContainer, {
-  padding: '0.2em 0.625em'
+  flexWrap: 'wrap',
+  cursor: 'default'
 });
 
 var historyElementStyle = {
-  width: 'auto',
-  height: '2em',
-  lineHeight: '2em',
+  height: '32px',
+  lineHeight: '32px',
   textAlign: 'center',
-  borderRadius: '1em',
-  display: 'inline-block',
+  borderRadius: SharedStyle.RADIUS.full,
+  display: 'inline-flex',
+  alignItems: 'center',
   cursor: 'pointer',
-  backgroundColor: SharedStyle.PRIMARY_COLOR.alt,
-  color: SharedStyle.PRIMARY_COLOR.text_main,
+  backgroundColor: 'rgba(59, 130, 246, 0.15)',
+  color: SharedStyle.SECONDARY_COLOR.light,
   textTransform: 'capitalize',
-  margin: '0.25em',
-  padding: '0 1em'
+  padding: '0 16px',
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  transition: SharedStyle.TRANSITIONS.fast,
+  border: '1px solid transparent'
 };
 
 var CatalogList = function (_Component) {

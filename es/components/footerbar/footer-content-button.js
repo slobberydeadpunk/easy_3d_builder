@@ -15,90 +15,109 @@ import { FaTimes as IconClose } from 'react-icons/fa';
 
 var labelContainerStyle = {
   width: 'auto',
-  display: 'inline-block',
+  display: 'inline-flex',
+  alignItems: 'center',
   margin: 0,
-  padding: '0px 5px 0px 0px'
+  padding: '0px 8px 0px 0px'
 };
 
 var toggleButtonStyle = {
-  color: '#CCC',
+  color: SharedStyle.PRIMARY_COLOR.text_muted,
   textAlign: 'center',
   cursor: 'pointer',
-  userSelect: 'none'
+  userSelect: 'none',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '4px',
+  padding: '4px 8px',
+  borderRadius: SharedStyle.RADIUS.sm,
+  transition: SharedStyle.TRANSITIONS.fast,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.xs
 };
 
 var toggleButtonStyleOver = _extends({}, toggleButtonStyle, {
-  color: SharedStyle.COLORS.white
+  color: SharedStyle.PRIMARY_COLOR.text_main,
+  backgroundColor: 'rgba(255, 255, 255, 0.05)'
 });
 
 var contentContainerStyleActive = {
   position: 'fixed',
-  width: 'calc( 100% - 2px )',
+  width: 'calc(100% - 2px)',
   height: '40%',
   left: 0,
   bottom: 20,
-  backgroundColor: SharedStyle.PRIMARY_COLOR.alt,
-  borderTop: SharedStyle.PRIMARY_COLOR.border,
+  backgroundColor: SharedStyle.PRIMARY_COLOR.surface,
+  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
   zIndex: 0,
   padding: 0,
   margin: 0,
-  transition: 'all 300ms ease'
+  transition: 'all 300ms ease-out',
+  boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.5)'
 };
 
 var contentContainerStyleInactive = _extends({}, contentContainerStyleActive, {
   visibility: 'hidden',
-  height: 0
+  height: 0,
+  boxShadow: 'none'
 });
 
 var contentHeaderStyle = {
   position: 'relative',
   width: '100%',
-  height: '2em',
+  height: '40px',
   top: 0,
   left: 0,
-  borderBottom: SharedStyle.PRIMARY_COLOR.border
+  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: '0 16px'
 };
 
 var titleStyle = {
-  position: 'relative',
-  height: '2em',
-  lineHeight: '2em',
-  marginLeft: '1em'
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  color: SharedStyle.PRIMARY_COLOR.text_main
 };
 
 var contentAreaStyle = {
   position: 'relative',
   width: '100%',
-  height: 'calc( 100% - 2em )',
-  padding: '1em',
-  overflowY: 'auto'
+  height: 'calc(100% - 40px)',
+  padding: SharedStyle.SPACING.lg,
+  overflowY: 'auto',
+  scrollbarWidth: 'thin',
+  scrollbarColor: SharedStyle.PRIMARY_COLOR.hover + ' transparent'
 };
 
 var iconCloseStyleOut = {
-  position: 'absolute',
-  width: '2em',
-  height: '2em',
-  right: 0,
-  top: 0,
-  padding: '0.5em',
-  borderLeft: SharedStyle.PRIMARY_COLOR.border,
-  cursor: 'pointer'
+  width: '32px',
+  height: '32px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: SharedStyle.RADIUS.md,
+  cursor: 'pointer',
+  transition: SharedStyle.TRANSITIONS.fast,
+  color: SharedStyle.PRIMARY_COLOR.text_muted
 };
 
 var iconCloseStyleOver = _extends({}, iconCloseStyleOut, {
   color: SharedStyle.COLORS.white,
-  backgroundColor: SharedStyle.SECONDARY_COLOR.alt
+  backgroundColor: SharedStyle.STATUS_COLORS.error
 });
 
 var iconStyle = {
-  width: '15px',
-  height: '15px',
-  marginTop: '-2px',
-  marginRight: '2px'
+  width: '14px',
+  height: '14px',
+  marginRight: '4px'
 };
 
 var textStyle = {
-  position: 'relative'
+  position: 'relative',
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamilyMono
 };
 
 var FooterContentButton = function (_Component) {

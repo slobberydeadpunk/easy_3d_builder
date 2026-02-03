@@ -1,3 +1,5 @@
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10,49 +12,64 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as SharedStyle from '../../shared-style';
 
-//http://www.cssportal.com/css-tooltip-generator/
-
 var STYLE = {
-  width: '30px',
-  height: '30px',
+  width: '40px',
+  height: '40px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginBottom: '5px',
-  fontSize: '25px',
+  marginBottom: '8px',
+  fontSize: '20px',
   position: 'relative',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  borderRadius: SharedStyle.RADIUS.lg,
+  transition: SharedStyle.TRANSITIONS.normal,
+  backgroundColor: 'transparent'
+};
+
+var STYLE_HOVER = {
+  backgroundColor: SharedStyle.PRIMARY_COLOR.hover
+};
+
+var STYLE_ACTIVE = {
+  backgroundColor: 'rgba(59, 130, 246, 0.15)',
+  boxShadow: SharedStyle.SHADOWS.glow
 };
 
 var STYLE_TOOLTIP = {
   position: 'absolute',
-  width: '140px',
+  minWidth: '120px',
+  maxWidth: '180px',
   color: SharedStyle.COLORS.white,
-  background: SharedStyle.COLORS.black,
-  height: '30px',
-  lineHeight: '30px',
+  background: SharedStyle.PRIMARY_COLOR.surface,
+  padding: '8px 12px',
   textAlign: 'center',
   visibility: 'visible',
-  borderRadius: '6px',
-  opacity: '0.8',
+  borderRadius: SharedStyle.RADIUS.md,
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  boxShadow: SharedStyle.SHADOWS.lg,
   left: '100%',
   top: '50%',
-  marginTop: '-15px',
-  marginLeft: '15px',
-  zIndex: '999',
-  fontSize: '12px'
+  transform: 'translateY(-50%)',
+  marginLeft: '12px',
+  zIndex: SharedStyle.Z_INDEX.tooltip,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  whiteSpace: 'nowrap',
+  backdropFilter: 'blur(8px)'
 };
 
 var STYLE_TOOLTIP_PIN = {
   position: 'absolute',
   top: '50%',
   right: '100%',
-  marginTop: '-8px',
+  marginTop: '-6px',
   width: '0',
   height: '0',
-  borderRight: '8px solid #000000',
-  borderTop: '8px solid transparent',
-  borderBottom: '8px solid transparent'
+  borderRight: '6px solid ' + SharedStyle.PRIMARY_COLOR.surface,
+  borderTop: '6px solid transparent',
+  borderBottom: '6px solid transparent'
 };
 
 var ToolbarButton = function (_Component) {
@@ -75,28 +92,42 @@ var ToolbarButton = function (_Component) {
       var state = this.state,
           props = this.props;
 
-      var color = props.active || state.active ? SharedStyle.SECONDARY_COLOR.icon : SharedStyle.PRIMARY_COLOR.icon;
+      var isHovered = state.active;
+      var isActive = props.active;
+
+      var color = isActive ? SharedStyle.SECONDARY_COLOR.main : isHovered ? SharedStyle.SECONDARY_COLOR.light : SharedStyle.PRIMARY_COLOR.icon;
+
+      var buttonStyle = _extends({}, STYLE, isHovered && !isActive ? STYLE_HOVER : {}, isActive ? STYLE_ACTIVE : {});
 
       return React.createElement(
         'div',
-        { style: STYLE,
+        {
+          style: buttonStyle,
           onMouseOver: function onMouseOver(event) {
             return _this2.setState({ active: true });
           },
           onMouseOut: function onMouseOut(event) {
             return _this2.setState({ active: false });
-          } },
+          },
+          onClick: props.onClick
+        },
         React.createElement(
           'div',
-          { style: { color: color }, onClick: props.onClick },
+          { style: {
+              color: color,
+              transition: SharedStyle.TRANSITIONS.fast,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            } },
           props.children
         ),
-        state.active ? React.createElement(
+        isHovered && React.createElement(
           'div',
           { style: STYLE_TOOLTIP },
           React.createElement('span', { style: STYLE_TOOLTIP_PIN }),
           props.tooltip
-        ) : null
+        )
       );
     }
   }]);

@@ -17,7 +17,10 @@ var STYLE = {
   display: 'block',
   overflowY: 'auto',
   overflowX: 'hidden',
-  paddingBottom: '20px'
+  paddingBottom: '20px',
+  borderLeft: '1px solid rgba(255, 255, 255, 0.06)',
+  scrollbarWidth: 'thin',
+  scrollbarColor: SharedStyle.PRIMARY_COLOR.hover + ' transparent'
 };
 
 var sortButtonsCb = function sortButtonsCb(a, b) {

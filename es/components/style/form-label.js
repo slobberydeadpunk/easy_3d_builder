@@ -3,20 +3,27 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 import React from 'react';
+import * as SharedStyle from '../../shared-style';
 
 var BASE_STYLE = {
   display: "block",
-  marginBottom: "5px"
+  marginBottom: "6px",
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.xs,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  color: SharedStyle.PRIMARY_COLOR.text_muted,
+  textTransform: "uppercase",
+  letterSpacing: "0.5px"
 };
 
 export default function FormLabel(_ref) {
   var children = _ref.children,
       style = _ref.style,
-      rest = _objectWithoutProperties(_ref, ["children", "style"]);
+      rest = _objectWithoutProperties(_ref, ['children', 'style']);
 
   return React.createElement(
-    "label",
-    _extends({ style: _extends({}, BASE_STYLE, { style: style }) }, rest),
+    'label',
+    _extends({ style: _extends({}, BASE_STYLE, style) }, rest),
     children
   );
 }

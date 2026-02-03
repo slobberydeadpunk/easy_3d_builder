@@ -20,6 +20,7 @@ export default function WallFactory(name, info, textures) {
     name: name,
     prototype: 'lines',
     info: info,
+    textures: textures,
     properties: {
       height: {
         label: translator.t('height'),

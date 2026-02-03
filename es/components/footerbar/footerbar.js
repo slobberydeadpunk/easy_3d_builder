@@ -22,42 +22,57 @@ import { VERSION } from '../../version';
 var footerBarStyle = {
   position: 'absolute',
   bottom: 0,
-  lineHeight: '14px',
-  fontSize: '12px',
-  color: SharedStyle.COLORS.white,
-  backgroundColor: SharedStyle.SECONDARY_COLOR.alt,
-  padding: '3px 1em',
+  lineHeight: '1',
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.xs,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  color: SharedStyle.PRIMARY_COLOR.text_alt,
+  backgroundColor: SharedStyle.PRIMARY_COLOR.surface,
+  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+  padding: '8px 16px',
   margin: 0,
   boxSizing: 'border-box',
   cursor: 'default',
   userSelect: 'none',
-  zIndex: '9001'
+  zIndex: '9001',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between'
 };
 
 export var leftTextStyle = {
   position: 'relative',
-  borderRight: '1px solid #FFF',
+  borderRight: '1px solid rgba(255, 255, 255, 0.1)',
   float: 'left',
-  padding: '0 1em',
-  display: 'inline-block'
+  padding: '0 16px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px'
 };
 
 export var rightTextStyle = {
   position: 'relative',
-  borderLeft: '1px solid #FFF',
+  borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
   float: 'right',
-  padding: '0 1em',
-  display: 'inline-block'
+  padding: '0 16px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px'
 };
 
 var coordStyle = {
   display: 'inline-block',
-  width: '6em',
+  width: '7em',
   margin: 0,
-  padding: 0
+  padding: 0,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamilyMono,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.xs
 };
 
-var appMessageStyle = { borderBottom: '1px solid #555', lineHeight: '1.5em' };
+var appMessageStyle = {
+  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+  lineHeight: '1.75em',
+  padding: '8px 0'
+};
 
 var FooterBar = function (_Component) {
   _inherits(FooterBar, _Component);

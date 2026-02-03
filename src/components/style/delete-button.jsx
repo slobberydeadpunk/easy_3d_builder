@@ -3,15 +3,17 @@ import Button from './button';
 import * as SharedStyle from '../../shared-style';
 
 const STYLE = {
-  borderColor: "#c12e2a",
-  backgroundColor: "#c9302c",
-  color: SharedStyle.COLORS.white
+  borderColor: SharedStyle.STATUS_COLORS.error,
+  backgroundColor: SharedStyle.STATUS_COLORS.error,
+  color: SharedStyle.COLORS.white,
+  boxShadow: '0 1px 3px rgba(239, 68, 68, 0.3)'
 };
 
 const STYLE_HOVER = {
-  backgroundColor: "#972726",
-  borderColor: "#c12e2a",
-  color: SharedStyle.COLORS.white
+  backgroundColor: '#DC2626',
+  borderColor: '#DC2626',
+  color: SharedStyle.COLORS.white,
+  boxShadow: '0 2px 6px rgba(239, 68, 68, 0.4)'
 };
 
 export default function FormDeleteButton({children, ...rest}) {

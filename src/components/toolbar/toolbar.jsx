@@ -16,11 +16,13 @@ import {
 import * as SharedStyle from '../../shared-style';
 
 const iconTextStyle = {
-  fontSize: '19px',
+  fontSize: '14px',
   textDecoration: 'none',
-  fontWeight: 'bold',
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.semibold,
   margin: '0px',
-  userSelect: 'none'
+  userSelect: 'none',
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  letterSpacing: '0.5px'
 };
 
 const Icon2D = ( {style} ) => <p style={{...iconTextStyle, ...style}}>2D</p>;
@@ -28,7 +30,12 @@ const Icon3D = ( {style} ) => <p style={{...iconTextStyle, ...style}}>3D</p>;
 
 const ASIDE_STYLE = {
   backgroundColor: SharedStyle.PRIMARY_COLOR.main,
-  padding: '10px'
+  padding: SharedStyle.SPACING.md,
+  borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: SharedStyle.SPACING.xs
 };
 
 const sortButtonsCb = (a, b) => {

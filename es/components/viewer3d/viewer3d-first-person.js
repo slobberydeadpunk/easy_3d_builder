@@ -276,6 +276,7 @@ var Viewer3DFirstPerson = function (_React$Component) {
       this.camera = camera;
       this.scene3D = scene3D;
       this.sceneOnTop = sceneOnTop;
+      window.__reactPlannerPlan = this.planData.plan;
       // this.planData = planData;
     }
   }, {
@@ -295,6 +296,9 @@ var Viewer3DFirstPerson = function (_React$Component) {
 
       this.scene3D.remove(this.planData.plan);
 
+      if (window.__reactPlannerPlan === this.planData.plan) {
+        window.__reactPlannerPlan = null;
+      }
       this.scene3D = null;
       this.planData = null;
       this.renderer.renderLists.dispose();

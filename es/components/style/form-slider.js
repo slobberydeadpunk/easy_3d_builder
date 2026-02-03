@@ -5,11 +5,37 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 import React from 'react';
 import ReactRange from '@mapbox/react-range';
 import FormTextInput from './form-text-input';
+import * as SharedStyle from '../../shared-style';
 
-var sliderContainerStyle = { display: 'inline-block', width: '80%', marginRight: '5%' };
-var sliderStyle = { display: 'block', width: '100%', height: '30px' };
-var textContainerStyle = { display: 'inline-block', width: '15%', float: 'right' };
-var textStyle = { height: '34px', textAlign: 'center' };
+var containerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: SharedStyle.SPACING.md
+};
+
+var sliderContainerStyle = {
+  flex: 1,
+  display: 'flex',
+  alignItems: 'center'
+};
+
+var sliderStyle = {
+  display: 'block',
+  width: '100%',
+  height: '36px',
+  cursor: 'pointer'
+};
+
+var textContainerStyle = {
+  width: '70px',
+  flexShrink: 0
+};
+
+var textStyle = {
+  height: '36px',
+  textAlign: 'center',
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamilyMono
+};
 
 export default function FormNumberInput(_ref) {
   var value = _ref.value,
@@ -18,7 +44,7 @@ export default function FormNumberInput(_ref) {
 
   return React.createElement(
     'div',
-    null,
+    { style: containerStyle },
     React.createElement(
       'div',
       { style: sliderContainerStyle },

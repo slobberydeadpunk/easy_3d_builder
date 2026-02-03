@@ -14,59 +14,62 @@ import { MdNavigateNext } from 'react-icons/md';
 import * as SharedStyle from '../../shared-style';
 
 var STYLE_BOX = {
-  width: '14em',
-  height: '14em',
-  padding: '0.625em',
-  background: '#f7f7f9',
-  border: '1px solid #e1e1e8',
+  width: '100%',
+  minHeight: '200px',
+  padding: SharedStyle.SPACING.md,
+  background: SharedStyle.PRIMARY_COLOR.surface,
+  border: '1px solid rgba(255, 255, 255, 0.06)',
   cursor: 'pointer',
   position: 'relative',
-  boxShadow: '0 1px 6px 0 rgba(0, 0, 0, 0.11), 0 1px 4px 0 rgba(0, 0, 0, 0.11)',
-  borderRadius: '2px',
-  transition: 'all .2s ease-in-out',
-  WebkitTransition: 'all .2s ease-in-out',
-  alignSelf: 'center',
-  justifySelf: 'center'
+  boxShadow: SharedStyle.SHADOWS.sm,
+  borderRadius: SharedStyle.RADIUS.lg,
+  transition: SharedStyle.TRANSITIONS.normal,
+  alignSelf: 'stretch',
+  justifySelf: 'stretch'
 };
 
 var STYLE_BOX_HOVER = _extends({}, STYLE_BOX, {
-  background: SharedStyle.SECONDARY_COLOR.main
+  background: SharedStyle.PRIMARY_COLOR.hover,
+  borderColor: SharedStyle.SECONDARY_COLOR.main,
+  boxShadow: SharedStyle.SHADOWS.glow,
+  transform: 'translateY(-2px)'
 });
 
 var STYLE_TITLE = {
   width: '100%',
-  position: 'absolute',
   textAlign: 'center',
   display: 'block',
-  marginBottom: '.5em',
-  padding: '1em',
+  padding: SharedStyle.SPACING.md,
   textTransform: 'capitalize',
-  WebkitTransition: 'all .15s ease-in-out'
+  transition: SharedStyle.TRANSITIONS.normal,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.base,
+  color: SharedStyle.PRIMARY_COLOR.text_main
 };
 
 var STYLE_TITLE_HOVERED = _extends({}, STYLE_TITLE, {
-  fontSize: '1.4em',
-  transform: 'translateY(-60px)',
-  color: 'rgb(28, 166, 252)',
-  marginTop: '0.5em'
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.lg,
+  color: SharedStyle.SECONDARY_COLOR.light
 });
 
 var STYLE_NEXT_HOVER = {
-  position: 'absolute',
   color: SharedStyle.SECONDARY_COLOR.main,
-  fontSize: '5em',
-  width: '100%'
+  fontSize: '4em',
+  opacity: 0.8,
+  filter: 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))'
 };
 
 var CONTAINER_DIV = {
-  background: SharedStyle.COLORS.white,
-  marginBottom: '5px',
-  border: 'solid 1px #EEE',
+  background: SharedStyle.PRIMARY_COLOR.input,
+  borderRadius: SharedStyle.RADIUS.md,
   width: '100%',
   height: '100%',
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  gap: SharedStyle.SPACING.sm
 };
 
 var CatalogPageItem = function (_Component) {

@@ -4,17 +4,25 @@ import * as SharedStyle from '../../shared-style';
 const STYLE_INPUT = {
   display: 'block',
   width: '100%',
-  padding: '0 2px',
-  fontSize: '13px',
+  padding: '8px 12px',
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
   lineHeight: '1.25',
-  color: SharedStyle.PRIMARY_COLOR.input,
-  backgroundColor: SharedStyle.COLORS.white,
+  color: SharedStyle.PRIMARY_COLOR.text_main,
+  backgroundColor: SharedStyle.PRIMARY_COLOR.input,
   backgroundImage: 'none',
-  border: '1px solid rgba(0,0,0,.15)',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  borderRadius: SharedStyle.RADIUS.md,
   outline: 'none',
-  height: '30px',
+  height: '36px',
+  transition: SharedStyle.TRANSITIONS.fast,
+  boxSizing: 'border-box'
 };
 
+const STYLE_INPUT_FOCUS = {
+  border: `1px solid ${SharedStyle.SECONDARY_COLOR.main}`,
+  boxShadow: `0 0 0 3px rgba(59, 130, 246, 0.15)`
+};
 
 export default class FormTextInput extends Component {
 
@@ -25,9 +33,13 @@ export default class FormTextInput extends Component {
 
   render() {
     let { style, ...rest } = this.props;
+    let { focus } = this.state;
 
-    let textInputStyle = { ...STYLE_INPUT, ...style };
-    if (this.state.focus) textInputStyle.border = `1px solid ${SharedStyle.SECONDARY_COLOR.main}`;
+    let textInputStyle = { 
+      ...STYLE_INPUT, 
+      ...style,
+      ...(focus ? STYLE_INPUT_FOCUS : {})
+    };
 
     return <input
       onFocus={e => this.setState({ focus: true })}

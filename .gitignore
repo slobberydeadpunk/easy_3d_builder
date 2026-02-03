@@ -4,3 +4,7 @@ node_modules
 dist/*
 !dist/index.html
 .vscode
+
+# Python
+*.pyc
+__pycache__/

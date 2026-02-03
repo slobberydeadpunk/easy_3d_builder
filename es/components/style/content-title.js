@@ -7,8 +7,12 @@ import PropTypes from 'prop-types';
 import * as SharedStyle from '../../shared-style';
 
 var STYLE = {
-  color: SharedStyle.PRIMARY_COLOR.alt,
-  fontWeight: 300
+  color: SharedStyle.PRIMARY_COLOR.text_main,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.semibold,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize['2xl'],
+  marginBottom: SharedStyle.SPACING.lg,
+  letterSpacing: '-0.025em'
 };
 
 export default function ContentTitle(_ref) {

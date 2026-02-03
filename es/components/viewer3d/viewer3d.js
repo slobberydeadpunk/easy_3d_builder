@@ -158,6 +158,7 @@ var Scene3DViewer = function (_React$Component) {
       this.camera = camera;
       this.scene3D = scene3D;
       this.planData = planData;
+      window.__reactPlannerPlan = planData.plan;
     }
   }, {
     key: 'componentWillUnmount',
@@ -173,6 +174,9 @@ var Scene3DViewer = function (_React$Component) {
       this.scene3D.remove(this.planData.plan);
       this.scene3D.remove(this.planData.grid);
 
+      if (window.__reactPlannerPlan === this.planData.plan) {
+        window.__reactPlannerPlan = null;
+      }
       this.scene3D = null;
       this.planData = null;
       this.camera = null;

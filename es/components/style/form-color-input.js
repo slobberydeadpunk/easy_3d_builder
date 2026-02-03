@@ -3,12 +3,19 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 import React from 'react';
-import FormTextInput from './form-text-input';
+import * as SharedStyle from '../../shared-style';
 
 var STYLE = {
-  padding: 0,
-  border: 0
+  padding: '4px',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  borderRadius: SharedStyle.RADIUS.md,
+  backgroundColor: SharedStyle.PRIMARY_COLOR.input,
+  cursor: 'pointer',
+  height: '36px',
+  width: '100%',
+  transition: SharedStyle.TRANSITIONS.fast
 };
+
 var EREG_NUMBER = /^.*$/;
 
 export default function FormColorInput(_ref) {
@@ -22,5 +29,5 @@ export default function FormColorInput(_ref) {
     }
   };
 
-  return React.createElement(FormTextInput, _extends({ type: 'color', style: STYLE, onChange: onChangeCustom, autoComplete: 'off' }, rest));
+  return React.createElement('input', _extends({ type: 'color', style: STYLE, onChange: onChangeCustom, autoComplete: 'off' }, rest));
 }

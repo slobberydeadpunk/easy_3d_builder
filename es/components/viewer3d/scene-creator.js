@@ -41,6 +41,41 @@ export function parseData(sceneData, actions, catalog) {
   return planData;
 }
 
+export function parseDataAsync(sceneData, actions, catalog) {
+  var planData = {};
+
+  planData.sceneGraph = {
+    unit: sceneData.unit,
+    layers: {},
+    busyResources: { layers: {} },
+    width: sceneData.width,
+    height: sceneData.height,
+    LODs: {}
+  };
+
+  planData.plan = new Three.Object3D();
+  planData.plan.name = 'plan';
+
+  planData.grid = createGrid(sceneData);
+  planData.grid.name = 'grid';
+
+  planData.boundingBox = new Three.Box3().setFromObject(planData.grid);
+  planData.boundingBox.name = 'boundingBox';
+
+  var promises = [];
+
+  sceneData.layers.forEach(function (layer) {
+    if (layer.id === sceneData.selectedLayer || layer.visible) {
+      promises = promises.concat(createLayerObjects(layer, planData, sceneData, actions, catalog));
+    }
+  });
+
+  return Promise.all(promises).then(function () {
+    updateBoundingBox(planData);
+    return planData;
+  });
+}
+
 function createLayerObjects(layer, planData, sceneData, actions, catalog) {
 
   var promises = [];

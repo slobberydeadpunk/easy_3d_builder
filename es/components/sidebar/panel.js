@@ -14,30 +14,44 @@ import * as SharedStyle from '../../shared-style';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 var STYLE = {
-  borderTop: '1px solid #222',
-  borderBottom: '1px solid #48494E',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
   userSelect: 'none'
 };
+
 var STYLE_TITLE = {
-  fontSize: '11px',
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
   color: SharedStyle.PRIMARY_COLOR.text_alt,
-  padding: '5px 15px 8px 15px',
+  padding: '12px 16px',
   backgroundColor: SharedStyle.PRIMARY_COLOR.alt,
-  textShadow: '-1px -1px 2px rgba(0, 0, 0, 1)',
-  boxShadow: 'inset 0px -3px 19px 0px rgba(0,0,0,0.5)',
   margin: '0px',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  transition: SharedStyle.TRANSITIONS.fast,
+  letterSpacing: '0.3px',
+  textTransform: 'uppercase'
 };
+
+var STYLE_TITLE_HOVER = {
+  backgroundColor: SharedStyle.PRIMARY_COLOR.hover
+};
+
 var STYLE_CONTENT = {
-  fontSize: '11px',
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
   color: SharedStyle.PRIMARY_COLOR.text_alt,
-  border: '1px solid #222',
   padding: '0px',
-  backgroundColor: SharedStyle.PRIMARY_COLOR.alt,
-  textShadow: '-1px -1px 2px rgba(0, 0, 0, 1)'
+  backgroundColor: SharedStyle.PRIMARY_COLOR.surface,
+  overflow: 'hidden',
+  transition: 'max-height 200ms ease-out, opacity 200ms ease-out'
 };
+
 var STYLE_ARROW = {
-  float: 'right'
+  transition: SharedStyle.TRANSITIONS.fast,
+  opacity: 0.6
 };
 
 var Panel = function (_Component) {
@@ -79,13 +93,22 @@ var Panel = function (_Component) {
           hover = _state.hover;
 
 
+      var titleStyle = _extends({}, STYLE_TITLE, hover ? STYLE_TITLE_HOVER : {}, {
+        color: hover ? SharedStyle.SECONDARY_COLOR.light : SharedStyle.PRIMARY_COLOR.text_alt
+      });
+
+      var arrowStyle = _extends({}, STYLE_ARROW, {
+        transform: opened ? 'rotate(180deg)' : 'rotate(0deg)',
+        opacity: hover ? 1 : 0.6
+      });
+
       return React.createElement(
         'div',
         { style: STYLE },
         React.createElement(
           'h3',
           {
-            style: _extends({}, STYLE_TITLE, { color: hover ? SharedStyle.SECONDARY_COLOR.main : SharedStyle.PRIMARY_COLOR.text_alt }),
+            style: titleStyle,
             onMouseEnter: function onMouseEnter() {
               return _this2.toggleHover();
             },
@@ -96,13 +119,20 @@ var Panel = function (_Component) {
               return _this2.toggleOpen();
             }
           },
-          name,
-          headComponents,
-          opened ? React.createElement(FaAngleUp, { style: STYLE_ARROW }) : React.createElement(FaAngleDown, { style: STYLE_ARROW })
+          React.createElement(
+            'span',
+            { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+            name,
+            headComponents
+          ),
+          React.createElement(FaAngleDown, { style: arrowStyle })
         ),
         React.createElement(
           'div',
-          { style: _extends({}, STYLE_CONTENT, { display: opened ? 'block' : 'none' }) },
+          { style: _extends({}, STYLE_CONTENT, {
+              maxHeight: opened ? '2000px' : '0px',
+              opacity: opened ? 1 : 0
+            }) },
           children
         )
       );

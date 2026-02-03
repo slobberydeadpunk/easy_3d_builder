@@ -18,6 +18,7 @@ export default function AreaFactory(name, info, textures) {
         layerElementsVisible: false
       }
     }),
+    textures: textures,
     properties: {
       patternColor: {
         label: translator.t('color'),

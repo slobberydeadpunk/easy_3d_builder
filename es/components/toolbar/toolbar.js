@@ -20,11 +20,13 @@ import { MODE_IDLE, MODE_3D_VIEW, MODE_3D_FIRST_PERSON, MODE_VIEWING_CATALOG, MO
 import * as SharedStyle from '../../shared-style';
 
 var iconTextStyle = {
-  fontSize: '19px',
+  fontSize: '14px',
   textDecoration: 'none',
-  fontWeight: 'bold',
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.semibold,
   margin: '0px',
-  userSelect: 'none'
+  userSelect: 'none',
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  letterSpacing: '0.5px'
 };
 
 var Icon2D = function Icon2D(_ref) {
@@ -46,7 +48,12 @@ var Icon3D = function Icon3D(_ref2) {
 
 var ASIDE_STYLE = {
   backgroundColor: SharedStyle.PRIMARY_COLOR.main,
-  padding: '10px'
+  padding: SharedStyle.SPACING.md,
+  borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: SharedStyle.SPACING.xs
 };
 
 var sortButtonsCb = function sortButtonsCb(a, b) {

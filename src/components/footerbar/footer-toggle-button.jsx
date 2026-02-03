@@ -3,22 +3,29 @@ import PropTypes from 'prop-types';
 import * as SharedStyle from '../../shared-style';
 
 const toggleButtonStyle = {
-  width: '5.5em',
-  color: '#CCC',
+  minWidth: '5.5em',
+  color: SharedStyle.PRIMARY_COLOR.text_muted,
   textAlign: 'center',
   cursor: 'pointer',
   userSelect: 'none',
   border: '1px solid transparent',
-  margin: '-1px 5px 0 5px',
-  borderRadius: '2px',
-  display: 'inline-block'
+  margin: '0 4px',
+  padding: '4px 8px',
+  borderRadius: SharedStyle.RADIUS.sm,
+  display: 'inline-block',
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.xs,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  transition: SharedStyle.TRANSITIONS.fast,
+  backgroundColor: 'transparent'
 };
 
 const toggleButtonStyleOver = {
   ...toggleButtonStyle,
-  backgroundColor: '#1c82c6',
-  border: '1px solid #FFF',
-  color: SharedStyle.COLORS.white
+  backgroundColor: SharedStyle.SECONDARY_COLOR.main,
+  border: '1px solid transparent',
+  color: SharedStyle.COLORS.white,
+  boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)'
 };
 
 export default class FooterToggleButton extends Component {

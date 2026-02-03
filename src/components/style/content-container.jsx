@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as SharedStyle from '../../shared-style';
 
 const STYLE = {
-  padding: '0 20px',
-  overflowY: 'auto'
+  padding: SharedStyle.SPACING.xl,
+  overflowY: 'auto',
+  backgroundColor: SharedStyle.PRIMARY_COLOR.main,
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${SharedStyle.PRIMARY_COLOR.hover} transparent`
 };
 
 export default function ContentContainer({children, width, height, style = {}}) {

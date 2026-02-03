@@ -17,27 +17,37 @@ import { KEYBOARD_BUTTON_CODE } from '../../constants';
 var STYLE_INPUT = {
   display: 'block',
   width: '100%',
-  padding: '0 2px',
-  fontSize: '13px',
+  padding: '8px 12px',
+  paddingRight: '36px',
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamilyMono,
   lineHeight: '1.25',
-  color: SharedStyle.PRIMARY_COLOR.input,
-  backgroundColor: SharedStyle.COLORS.white,
+  color: SharedStyle.PRIMARY_COLOR.text_main,
+  backgroundColor: SharedStyle.PRIMARY_COLOR.input,
   backgroundImage: 'none',
-  border: '1px solid rgba(0,0,0,.15)',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  borderRadius: SharedStyle.RADIUS.md,
   outline: 'none',
-  height: '30px'
+  height: '36px',
+  transition: SharedStyle.TRANSITIONS.fast,
+  boxSizing: 'border-box'
 };
 
 var confirmStyle = {
   position: 'absolute',
   cursor: 'pointer',
-  width: '2em',
-  height: '2em',
-  right: '0.35em',
-  top: '0.35em',
+  width: '24px',
+  height: '24px',
+  right: '6px',
+  top: '50%',
+  transform: 'translateY(-50%)',
   backgroundColor: SharedStyle.SECONDARY_COLOR.main,
   color: '#FFF',
-  transition: 'all 0.1s linear'
+  borderRadius: SharedStyle.RADIUS.sm,
+  transition: SharedStyle.TRANSITIONS.fast,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
 };
 
 var FormNumberInput = function (_Component) {

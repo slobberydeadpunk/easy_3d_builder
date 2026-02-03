@@ -15,9 +15,13 @@ import PropTypes from 'prop-types';
 import * as SharedStyle from '../../shared-style';
 
 var BASE_STYLE = {
-  display: "inline-block",
-  fontWeight: "400",
-  lineHeight: "1.25",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "8px",
+  fontFamily: SharedStyle.TYPOGRAPHY.fontFamily,
+  fontWeight: SharedStyle.TYPOGRAPHY.fontWeight.medium,
+  lineHeight: "1",
   textAlign: "center",
   whiteSpace: "nowrap",
   verticalAlign: "middle",
@@ -26,26 +30,28 @@ var BASE_STYLE = {
   MozUserSelect: "none",
   MsUserSelect: "none",
   userSelect: "none",
-  padding: "5px 14px",
-  fontSize: "14px",
-  color: SharedStyle.COLORS.black,
-  fonWeight: "400px",
-  transition: "background-color 175ms ease, border 175ms ease",
+  padding: "10px 16px",
+  fontSize: SharedStyle.TYPOGRAPHY.fontSize.sm,
+  color: SharedStyle.COLORS.white,
+  transition: SharedStyle.TRANSITIONS.normal,
   outline: "none",
-  borderRadius: "2px",
+  borderRadius: SharedStyle.RADIUS.md,
   borderWidth: "1px",
-  borderType: "solid",
+  borderStyle: "solid",
   width: '100%'
 };
 
 var BASE_STYLE_SIZE = {
   small: {
-    fontSize: "12px",
-    padding: "3px 8px"
+    fontSize: SharedStyle.TYPOGRAPHY.fontSize.xs,
+    padding: "6px 12px",
+    borderRadius: SharedStyle.RADIUS.sm
   },
   normal: {},
   large: {
-    padding: "8px 20px"
+    fontSize: SharedStyle.TYPOGRAPHY.fontSize.base,
+    padding: "12px 24px",
+    borderRadius: SharedStyle.RADIUS.lg
   }
 };
 
@@ -57,7 +63,7 @@ var Button = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, props));
 
-    _this.state = { hover: false };
+    _this.state = { hover: false, active: false };
     return _this;
   }
 
@@ -66,7 +72,9 @@ var Button = function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      var hover = this.state.hover;
+      var _state = this.state,
+          hover = _state.hover,
+          active = _state.active;
 
       var _props = this.props,
           type = _props.type,
@@ -76,7 +84,7 @@ var Button = function (_Component) {
           size = _props.size,
           rest = _objectWithoutProperties(_props, ['type', 'style', 'styleHover', 'children', 'size']);
 
-      var styleMerged = Object.assign({}, BASE_STYLE, BASE_STYLE_SIZE[size], hover ? customStyleHover : customStyle);
+      var styleMerged = Object.assign({}, BASE_STYLE, BASE_STYLE_SIZE[size], hover ? customStyleHover : customStyle, active ? { transform: 'scale(0.98)' } : {});
 
       return React.createElement(
         'button',
@@ -86,7 +94,13 @@ var Button = function (_Component) {
             return _this2.setState({ hover: true });
           },
           onMouseLeave: function onMouseLeave(e) {
-            return _this2.setState({ hover: false });
+            return _this2.setState({ hover: false, active: false });
+          },
+          onMouseDown: function onMouseDown(e) {
+            return _this2.setState({ active: true });
+          },
+          onMouseUp: function onMouseUp(e) {
+            return _this2.setState({ active: false });
           },
           style: styleMerged
         }, rest),
@@ -105,12 +119,16 @@ Button.defaultProps = {
   type: "button",
   size: "normal",
   style: {
-    backgroundColor: "#e6e6e6",
-    borderColor: "#adadad"
+    backgroundColor: SharedStyle.SECONDARY_COLOR.main,
+    borderColor: SharedStyle.SECONDARY_COLOR.main,
+    color: SharedStyle.COLORS.white,
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
   },
   styleHover: {
-    backgroundColor: "#d4d4d4",
-    borderColor: "#8c8c8c"
+    backgroundColor: SharedStyle.SECONDARY_COLOR.alt,
+    borderColor: SharedStyle.SECONDARY_COLOR.alt,
+    color: SharedStyle.COLORS.white,
+    boxShadow: '0 2px 6px rgba(59, 130, 246, 0.4)'
   }
 };
 
