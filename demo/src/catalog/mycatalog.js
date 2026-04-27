@@ -14,5 +14,15 @@ for( let x in Items ) catalog.registerElement( Items[x] );
 
 catalog.registerCategory('windows', 'Windows', [Holes.window, Holes.sashWindow, Holes.venetianBlindWindow, Holes.windowCurtain] );
 catalog.registerCategory('doors', 'Doors', [Holes.door, Holes.doorDouble, Holes.panicDoor, Holes.panicDoorDouble, Holes.slidingDoor] );
+catalog.registerCategory('kitchen', '厨房', [
+  Items.kitchenBaseCabinet,
+  Items.kitchenWallCabinet,
+  Items.kitchenCountertop,
+  Items.kitchenCooktop,
+  Items.kitchenGasWaterHeater,
+  Items.kitchenSink,
+  Items.kitchenRangeHood,
+  Items.fridge,
+]);
 
 export default catalog;
